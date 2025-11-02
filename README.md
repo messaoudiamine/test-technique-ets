@@ -15,18 +15,15 @@ Application Web de Gestion de Compte et d’Articles avec Symfony et React
    ```bash
    cd backend
    ```
-Variables d'environnement Backend
 
 2. **Créer le fichier `.env`**
-   ```bash
-   cp .env.example .env
-   ```
    
-   Le fichier `.env` contiendra les variables :
+   Créer le fichier `.env` à la racine du dossier backend avec le contenu suivant :
    ```env
    APP_ENV=dev
    MONGODB_URI=mongodb://mongo:27017
    MONGODB_DB=app
+   JWT_PASSPHRASE=changeme
    ```
 
 3. **Lancer**
@@ -48,6 +45,8 @@ Variables d'environnement Backend
    ```bash
    docker compose exec app php bin/console lexik:jwt:generate-keypair
    ```
+   
+   Cette commande génère les clés privées et publiques nécessaires pour l'authentification JWT. Si vous êtes invité à saisir la passphrase, utilisez la valeur de `JWT_PASSPHRASE` définie dans votre fichier `.env`.
 
 7. **Charger les fixtures**
    ```bash
@@ -109,24 +108,29 @@ Le frontend sera accessible sur **http://localhost:3000**
 
 Les variables sont configurées dans le fichier `.env` à la racine du dossier `backend/` :
 
-1. **Créer le fichier `.env` depuis `.env.example`**
+1. **Créer le fichier `.env`**
    ```bash
    cd backend
-   cp .env.example .env
    ```
-
+   
 2. **Contenu du fichier `.env`** :
+   
+   Créer le fichier `.env` à la racine du dossier backend avec le contenu suivant :
    ```env
    APP_ENV=dev
    MONGODB_URI=mongodb://mongo:27017
    MONGODB_DB=app
+   JWT_PASSPHRASE=changeme
    ```
 
    - `APP_ENV` : Environnement de l'application (dev, prod, test)
    - `MONGODB_URI` : URI de connexion à MongoDB (utilise le nom du service Docker `mongo`)
    - `MONGODB_DB` : Nom de la base de données MongoDB
+   - `JWT_PASSPHRASE` : Passphrase pour la génération des clés JWT (à changer en production)
 
 3. **Modifier les valeurs si nécessaire**
+   
+   Dans un environnement de production, assurez-vous de changer la valeur de `JWT_PASSPHRASE` par une passphrase sécurisée.
 
 Le fichier `.env` est lu automatiquement par Docker Compose via `env_file` dans `docker-compose.yml`.
 
@@ -262,3 +266,44 @@ Toutes les listes paginées retournent le format suivant :
   "total_pages": 4
 }
 ```
+
+## 🔧 Dépannage
+
+### Erreur "Your hydrator directory must be writable"
+
+Si vous rencontrez cette erreur lors du démarrage des containers :
+
+1. **Arrêter les containers**
+   ```bash
+   cd backend
+   docker compose down
+   ```
+
+2. **Reconstruire les containers**
+   ```bash
+   docker compose build --no-cache app
+   ```
+
+3. **Relancer les services**
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Vérifier les permissions** (optionnel, si l'erreur persiste)
+   ```bash
+   docker compose exec app ls -la /app/var/cache/dev/doctrine/odm/mongodb/
+   ```
+
+Cette erreur survient généralement lorsque les répertoires de cache MongoDB ODM n'ont pas les bonnes permissions. 
+
+**Solution** : Les répertoires nécessaires sont créés directement dans le `Dockerfile` avec les bonnes permissions (775 pour www-data). De plus, les répertoires `/app/var` et `/app/config/jwt` utilisent maintenant des volumes nommés Docker, ce qui garantit que les permissions définies dans le Dockerfile sont préservées.
+
+### Autres problèmes courants
+
+**Erreur de connexion à MongoDB** : Assurez-vous que le service `mongo` est bien démarré avec `docker compose ps`
+
+**Note sur les volumes** : Les répertoires `/app/var` et `/app/config/jwt` utilisent des volumes nommés Docker (`symfony_var` et `symfony_config_jwt`). Si vous avez besoin de supprimer complètement ces données, vous pouvez utiliser :
+```bash
+docker compose down -v
+```
+Attention : cette commande supprime également les données MongoDB.

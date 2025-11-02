@@ -31,18 +31,16 @@ RUN echo "memory_limit = 256M" > /usr/local/etc/php/conf.d/memory.ini \
 # Create cache directories with proper permissions
 RUN mkdir -p /app/var/cache/dev/doctrine/odm/mongodb/Proxies \
     && mkdir -p /app/var/cache/dev/doctrine/odm/mongodb/Hydrators \
+    && mkdir -p /app/var/cache/dev/doctrine/odm/mongodb/PersistentCollections \
     && mkdir -p /app/var/cache/prod/doctrine/odm/mongodb/Proxies \
     && mkdir -p /app/var/cache/prod/doctrine/odm/mongodb/Hydrators \
+    && mkdir -p /app/var/cache/prod/doctrine/odm/mongodb/PersistentCollections \
     && mkdir -p /app/var/log \
     && mkdir -p /app/config/jwt \
     && chown -R www-data:www-data /app/var \
-    && chmod -R 775 /app/var
-
-# Create entrypoint script to fix permissions
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+    && chown -R www-data:www-data /app/config/jwt \
+    && chmod -R 775 /app/var \
+    && chmod -R 775 /app/config/jwt
 
 # PHP-FPM listens on port 9000 (default)
-
-ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]

@@ -6,6 +6,8 @@ services:
       - .env
     volumes:
       - ./:/app
+      - symfony_var:/app/var
+      - symfony_config_jwt:/app/config/jwt
     depends_on:
       - mongo
     networks:
@@ -37,6 +39,8 @@ services:
 
 volumes:
   mongo_data:
+  symfony_var:
+  symfony_config_jwt:
 
 networks:
   symfony_network:
