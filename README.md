@@ -6,7 +6,6 @@ Application Web de Gestion de Compte et d’Articles avec Symfony et React
 
 - **Docker** et **Docker Compose**
 - **Node.js** (version 18 ou supérieure) et **npm**
-- **PHP 8.1+** et **Composer** (si _vous_ lancez le backend sans Docker)
 
 
 ### Backend (Symfony)
@@ -99,7 +98,7 @@ Variables d'environnement front
 
 Le frontend sera accessible sur **http://localhost:3000**
 
-## 🚀 Fonctionnalités
+##  Fonctionnalités
 
 - ✅ **Authentification JWT** : Connexion et inscription avec tokens JWT
 - ✅ **Page de compte utilisateur** : Affichage et modification des informations personnelles
@@ -107,7 +106,7 @@ Le frontend sera accessible sur **http://localhost:3000**
 - ✅ **Pagination** : Navigation paginée pour les articles
 - ✅ **Design responsive** : Interface adaptée à tous les écrans avec Tailwind CSS
 
-## 🔑 Comptes par défaut (Fixtures)
+##  Comptes par défaut (Fixtures)
 
 - **Admin** :
   - Email : `admin@test.com`
@@ -132,7 +131,7 @@ Authorization: Bearer <votre_token_jwt>
 
 ### Endpoints
 
-#### 🔐 Authentification
+#### Authentification
 
 **POST** `/api/auth/register`
 - Enregistre un nouvel utilisateur
