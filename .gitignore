@@ -46,3 +46,4 @@ frontend/*.pem
 package-lock.json
 .env
 .env.local
+.idea/php.xml

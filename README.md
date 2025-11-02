@@ -19,17 +19,26 @@ Application Web de Gestion de Compte et d’Articles avec Symfony et React
 2. **Créer le fichier `.env`**
    
    Créer le fichier `.env` à la racine du dossier backend avec le contenu suivant :
-   ```env
+   
+    ```env
+   # Application
    APP_ENV=dev
+   APP_SECRET=changez-moi-par-une-valeur-secrete-aleatoire
+
+   # MongoDB
    MONGODB_URI=mongodb://mongo:27017
    MONGODB_DB=app
-   JWT_PASSPHRASE=changeme
    
+   # JWT Authentication
+    JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+    JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+    JWT_PASSPHRASE=votre_passphrase_ici
+   
+   ###> nelmio/cors-bundle ###
+    CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+    ###< nelmio/cors-bundle ###
+
    ```
-   - `APP_ENV` : Environnement de l'application (dev, prod, test)
-   - `MONGODB_URI` : URI de connexion a MongoDB (utilise le nom du service Docker `mongo`)
-   - `MONGODB_DB` : Nom de la base de données MongoDB
-   - `JWT_PASSPHRASE` : Passphrase pour la génération des clés JWT (à changer en production)
      
 Le fichier `.env` est lu automatiquement par Docker Compose via `env_file` dans `docker-compose.yml`.
 
