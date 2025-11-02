@@ -1,0 +1,42 @@
+services:
+  app:
+    build: .
+    container_name: symfony_php
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    depends_on:
+      - mongo
+    networks:
+      - symfony_network
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: symfony_caddy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - app
+    networks:
+      - symfony_network
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - symfony_network
+
+volumes:
+  mongo_data:
+
+networks:
+  symfony_network:

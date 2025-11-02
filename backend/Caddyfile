@@ -1,0 +1,48 @@
+{
+  auto_https off
+}
+
+:80 {
+  root * /app/public
+
+  # Intercepter les requêtes OPTIONS (preflight) AVANT tout traitement
+  @options {
+    method OPTIONS
+    path /api/*
+  }
+  handle @options {
+    header {
+      Access-Control-Allow-Origin "http://localhost:3000"
+      Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+      Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+      Access-Control-Allow-Credentials "true"
+      Access-Control-Max-Age "3600"
+    }
+    respond 200
+  }
+
+  # Headers CORS pour toutes les autres réponses API
+  @api {
+    path /api/*
+  }
+  header @api {
+    Access-Control-Allow-Origin "http://localhost:3000"
+    Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    Access-Control-Allow-Credentials "true"
+  }
+
+  try_files {path} /index.php?{query}
+
+  # PHP-FPM via FastCGI
+  php_fastcgi app:9000 {
+    env APP_ENV dev
+    env APP_DEBUG 1
+  }
+
+  # Compression HTTP
+  encode zstd gzip
+
+  # Serveur de fichiers statiques
+  file_server
+}
