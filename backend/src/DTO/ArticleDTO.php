@@ -28,14 +28,10 @@ class ArticleDTO
 
     public function toArray(): array
     {
-        $data = [];
-        if ($this->title !== null) {
-            $data['title'] = $this->title;
-        }
-        if ($this->content !== null) {
-            $data['content'] = $this->content;
-        }
-        return $data;
+        return array_filter([
+            'title' => $this->title,
+            'content' => $this->content,
+        ], fn($value) => $value !== null);
     }
 }
 

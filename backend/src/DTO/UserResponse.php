@@ -11,8 +11,7 @@ readonly class UserResponse
         public string $name,
         public string $email,
         public array $roles
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

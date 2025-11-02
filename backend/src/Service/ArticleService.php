@@ -15,18 +15,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ArticleService
 {
-    private const DEFAULT_LIMIT = 10;
     private const MAX_LIMIT = 50;
 
     public function __construct(
-        private DocumentManager $documentManager,
-        private ValidatorInterface $validator
+        private readonly DocumentManager $documentManager,
+        private readonly ValidatorInterface $validator
     ) {
     }
 
     public function getPaginatedArticles(User $user, int $page, int $limit): array
     {
-        // Les admins voient tous les articles, les autres utilisateurs voient seulement les leurs
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             $queryBuilder = $this->createQueryBuilderForAll();
         } else {
@@ -80,6 +78,7 @@ class ArticleService
         $article->setAuteur($user);
 
         $errors = $this->validator->validate($article);
+
         if (count($errors) > 0) {
             return [
                 'success' => false,
@@ -99,15 +98,16 @@ class ArticleService
 
     public function updateArticle(Article $article, array $data): array
     {
-        if (isset($data['title'])) {
+        if (isset($data['title']) && $data['title'] !== '') {
             $article->setTitle($data['title']);
         }
 
-        if (isset($data['content'])) {
+        if (isset($data['content']) && $data['content'] !== '') {
             $article->setContent($data['content']);
         }
 
         $errors = $this->validator->validate($article);
+
         if (count($errors) > 0) {
             return [
                 'success' => false,
@@ -162,6 +162,7 @@ class ArticleService
     private function articlesToArray(iterable $articles): array
     {
         $result = [];
+
         foreach ($articles as $article) {
             $result[] = $this->getArticleResponse($article)->toArray();
         }
@@ -175,6 +176,7 @@ class ArticleService
     private function formatValidationErrors($errors): array
     {
         $errorMessages = [];
+
         foreach ($errors as $error) {
             $errorMessages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
         }

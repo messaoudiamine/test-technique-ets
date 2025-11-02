@@ -18,8 +18,7 @@ class ProfileController extends AbstractController
     public function __construct(
         private readonly DocumentManager $documentManager,
         private readonly ValidatorInterface $validator
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'get', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
@@ -53,8 +52,9 @@ class ProfileController extends AbstractController
                 ->findOneBy(['email' => $data['email']]);
 
             if ($existingUser && $existingUser->getId() !== $user->getId()) {
-                return new JsonResponse(
-                    ['message' => 'This email is already in use'],
+                return new JsonResponse([
+                    'message' => 'This email is already in use'
+                    ],
                     Response::HTTP_CONFLICT
                 );
             }
@@ -62,15 +62,18 @@ class ProfileController extends AbstractController
             $user->setEmail($data['email']);
         }
 
-        // Validate the entity
         $errors = $this->validator->validate($user);
+
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
             }
             return new JsonResponse(
-                ['message' => 'Validation errors', 'errors' => $errorMessages],
+                [
+                    'message' => 'Validation errors',
+                    'errors' => $errorMessages
+                 ],
                 Response::HTTP_BAD_REQUEST
             );
         }

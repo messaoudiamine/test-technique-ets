@@ -20,20 +20,21 @@ class AuthController extends AbstractController
     public function __construct(
         private readonly AuthService $authService,
         private readonly RequestValidationHelper $requestValidationHelper
-    ) {
-    }
+    ) {}
 
     #[Route('/register', name: 'register', methods: ['POST'])]
     public function register(Request $request): JsonResponse
     {
         $dtoOrError = $this->requestValidationHelper->deserializeRequest($request, UserDTO::class);
+
         if ($dtoOrError instanceof JsonResponse) {
             return $dtoOrError;
         }
+
         $dto = $dtoOrError;
 
-        // Validation avec le groupe 'create'
         $validationError = $this->requestValidationHelper->validateDto($dto, ['create']);
+
         if ($validationError) {
             return $validationError;
         }
@@ -61,12 +62,16 @@ class AuthController extends AbstractController
             );
         } catch (UserAlreadyExistsException $e) {
             return $this->json(
-                ['message' => $e->getMessage()],
+                [
+                    'message' => $e->getMessage()
+                ],
                 Response::HTTP_CONFLICT
             );
         } catch (\Exception $e) {
             return $this->json(
-                ['message' => 'An error occurred during registration'],
+                [
+                    'message' => 'An error occurred during registration'
+                ],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }

@@ -21,12 +21,11 @@ class ArticleController extends AbstractController
     public function __construct(
         private readonly ArticleService $articleService,
         private readonly RequestValidationHelper $requestValidationHelper
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function list(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -46,7 +45,12 @@ class ArticleController extends AbstractController
         $article = $this->articleService->getArticleById($id);
 
         if (!$article) {
-            return $this->json(['message' => 'Article not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(
+                [
+                    'message' => 'Article not found'
+                ],
+                Response::HTTP_NOT_FOUND
+            );
         }
 
         $this->denyAccessUnlessGranted('VIEW', $article);
@@ -61,17 +65,20 @@ class ArticleController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $dtoOrError = $this->requestValidationHelper->deserializeRequest($request, ArticleDTO::class);
+
         if ($dtoOrError instanceof JsonResponse) {
             return $dtoOrError;
         }
+
         $dto = $dtoOrError;
 
-        // Validation avec le groupe 'create'
         $validationError = $this->requestValidationHelper->validateDto($dto, ['create']);
+
         if ($validationError) {
             return $validationError;
         }
 
+        /** @var  User $user */
         $user = $this->getUser();
 
         $result = $this->articleService->createArticle($dto->toArray(), $user);
@@ -96,19 +103,26 @@ class ArticleController extends AbstractController
         $article = $this->articleService->getArticleById($id);
 
         if (!$article) {
-            return $this->json(['message' => 'Article not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(
+                [
+                    'message' => 'Article not found'
+                ],
+                Response::HTTP_NOT_FOUND
+            );
         }
 
         $this->denyAccessUnlessGranted('EDIT', $article);
 
         $dtoOrError = $this->requestValidationHelper->deserializeRequest($request, ArticleDTO::class);
+
         if ($dtoOrError instanceof JsonResponse) {
             return $dtoOrError;
         }
+
         $dto = $dtoOrError;
 
-        // Validation avec le groupe 'update'
         $validationError = $this->requestValidationHelper->validateDto($dto, ['update']);
+
         if ($validationError) {
             return $validationError;
         }
@@ -135,7 +149,12 @@ class ArticleController extends AbstractController
         $article = $this->articleService->getArticleById($id);
 
         if (!$article) {
-            return $this->json(['message' => 'Article not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(
+                [
+                    'message' => 'Article not found'
+                ],
+                Response::HTTP_NOT_FOUND
+            );
         }
 
         $this->denyAccessUnlessGranted('DELETE', $article);

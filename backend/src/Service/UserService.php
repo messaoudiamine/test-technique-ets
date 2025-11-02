@@ -16,15 +16,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserService
 {
-    private const DEFAULT_LIMIT = 10;
     private const MAX_LIMIT = 50;
 
     public function __construct(
-        private DocumentManager $documentManager,
-        private UserPasswordHasherInterface $passwordHasher,
-        private ValidatorInterface $validator
-    ) {
-    }
+        private readonly DocumentManager             $documentManager,
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly ValidatorInterface $validator
+    ) {}
 
     public function getPaginatedUsers(int $page, int $limit): array
     {

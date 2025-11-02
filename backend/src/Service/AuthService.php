@@ -15,23 +15,20 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AuthService
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
-        private JWTTokenManagerInterface $jwtManager
-    ) {
-    }
+        private readonly UserRepository              $userRepository,
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly JWTTokenManagerInterface $jwtManager
+    ) {}
 
     /**
      * @throws UserAlreadyExistsException
      */
     public function register(UserDTO $dto): array
     {
-        // Check if user already exists
         if ($this->userRepository->userExists($dto->email)) {
             throw new UserAlreadyExistsException($dto->email);
         }
 
-        // Create user document
         $user = new User();
         $user->setName($dto->name);
         $user->setEmail($dto->email);
@@ -39,13 +36,10 @@ class AuthService
             $this->passwordHasher->hashPassword($user, $dto->password)
         );
 
-        // Save document in MongoDB
         $this->userRepository->save($user);
 
-        // Generate JWT token
         $token = $this->jwtManager->create($user);
 
-        // Create response
         $userResponse = new UserResponse(
             $user->getId() ?? '',
             $user->getName() ?? '',

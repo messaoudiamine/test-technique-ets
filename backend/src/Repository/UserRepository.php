@@ -12,8 +12,7 @@ readonly class UserRepository
 {
     public function __construct(
         private DocumentManager $documentManager
-    ) {
-    }
+    ) {}
 
     public function findOneByEmail(string $email): ?User
     {

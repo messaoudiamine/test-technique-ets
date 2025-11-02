@@ -37,17 +37,11 @@ class UserDTO
 
     public function toArray(): array
     {
-        $data = [];
-        if ($this->name !== null) {
-            $data['name'] = $this->name;
-        }
-        if ($this->email !== null) {
-            $data['email'] = $this->email;
-        }
-        if ($this->password !== null) {
-            $data['password'] = $this->password;
-        }
-        return $data;
+        return array_filter([
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+        ], fn($value) => $value !== null);
     }
 }
 

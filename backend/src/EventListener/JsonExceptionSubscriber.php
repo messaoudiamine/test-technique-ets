@@ -24,7 +24,6 @@ class JsonExceptionSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         
-        // Only handle API routes
         if (!str_starts_with($request->getPathInfo(), '/api/')) {
             return;
         }
@@ -41,8 +40,8 @@ class JsonExceptionSubscriber implements EventSubscriberInterface
 
         $data = ['message' => $message];
 
-        // En mode dev, ajouter plus de détails sur l'erreur
         $isDebug = filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
         if ($isDebug) {
             $data['error'] = $exception->getMessage();
             $data['file'] = $exception->getFile();

@@ -21,10 +21,9 @@ class AppFixtures
     {
         $faker = Factory::create();
 
-        // Create admin user
         $admin = new User();
         $admin->setName('Admin User');
-        $admin->setEmail('admin@example.com');
+        $admin->setEmail('admin@test.com');
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
         $admin->setRoles(['ROLE_ADMIN']);
         $manager->persist($admin);
@@ -41,11 +40,10 @@ class AppFixtures
             $manager->persist($user);
         }
 
-        // Flush users first to ensure they have IDs
         $manager->flush();
 
-        // Create 5-15 articles per user (including admin)
         $allUsers = array_merge([$admin], $users);
+
         foreach ($allUsers as $user) {
             $articleCount = $faker->numberBetween(5, 15);
             

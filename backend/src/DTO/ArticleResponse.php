@@ -13,8 +13,7 @@ readonly class ArticleResponse
         public ?string $auteurId,
         public ?string $publicationDate,
         public ?array $author = null
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

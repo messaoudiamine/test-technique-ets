@@ -29,7 +29,6 @@ class ArticleVoter extends Voter
             return false;
         }
 
-        // Les administrateurs peuvent tout faire sur tous les articles
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
@@ -37,7 +36,6 @@ class ArticleVoter extends Voter
         /** @var Article $article */
         $article = $subject;
 
-        // Les utilisateurs normaux ne peuvent accéder qu'à leurs propres articles
         return $article->getAuteurId() === $user->getId();
     }
 }
